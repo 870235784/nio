@@ -11,6 +11,12 @@
                        position 总是小于或者等于 limit
                 capacity: 缓冲区的 capacity 表明可以储存在缓冲区中的最大数据容量。它指定了底层数组的大小 ― 或者至少是指定了准许
                           我们使用的底层数组的容量。limit 决不能大于 capacity
-                position <= limit <= capacity
+                0 <= position <= limit <= capacity
+    1.3 IO模型
+        1.3.1 概念
+            文件描述符: Linux 的内核将所有外部设备都看做一个文件来操作, 对一个文件的读写操作会调用内核提供的系统命令(api), 
+                返回一个file descriptor(fd, 文件描述符)。而对一个socket的读写也会有响应的描述符, 称为socket fd(socket文件描述
+                符), 描述符就是一个数字, 指向内核中的一个结构体(文件路径, 数据区等一些属性)
+                   
     参见: http://www.52im.net/forum.php?mod=viewthread&tid=2846
      
