@@ -23,7 +23,7 @@ public class NoBlockServer {
         serverSocketChannel.bind(new InetSocketAddress(8080));
         // 4. 获取选择器
         Selector selector = Selector.open();
-        // 4.1将通道注册到选择器上，指定接收“监听通道”事件
+        // 4.1将通道注册到选择器上，指定接收"监听通道"事件
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         // 5. 轮询获取选择器上已 "就绪" 的事件 ---> 只要select()>0, 说明已就绪
         while (selector.select() > 0) {
@@ -45,7 +45,7 @@ public class NoBlockServer {
                     SocketChannel client = (SocketChannel) selectionKey.channel();
                     // 9.1读取数据
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
-                    // 9.2得到文件通道，将客户端传递过来的图片写到本地项目下(写模式、没有则创建)
+                    // 9.2得到文件通道, 将客户端传递过来的图片写到本地项目下(写模式、没有则创建)
                     FileChannel fileChannel = FileChannel.open(Paths.get("C:\\Users\\DELL\\Desktop\\password_copy.txt"),
                             StandardOpenOption.WRITE, StandardOpenOption.CREATE);
                     while (client.read(buffer) > 0) {
