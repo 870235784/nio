@@ -25,7 +25,7 @@ public class FileCopy {
             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
             // step4 读取文件, 拷贝文件
             while (true) {
-                // 清空 position=0 limit=capacity
+                // 清空 position=0 limit=capacity (--> 转成ByteBuffer写模式)
                 byteBuffer.clear();
                 // 输入流管道-> buffer
                 int read = inputStreamChannel.read(byteBuffer);
@@ -33,7 +33,7 @@ public class FileCopy {
                 if (read == -1) {
                     break;
                 }
-                // 调用flip limit=position position=0
+                // 调用flip limit=position position=0 (--> 转成ByteBuffer读模式)
                 byteBuffer.flip();
                 // buffer-> 输出流管道
                 outputStreamChannel.write(byteBuffer);

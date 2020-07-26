@@ -34,6 +34,7 @@ public class TCAResponse {
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/json");
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
             response.headers().set(HttpHeaderNames.EXPIRES, 0);
+            // 如果是长连接
             if (HttpUtil.isKeepAlive(httpRequest)) {
                 response.headers().set(HttpHeaderNames.CONNECTION, "keep-alive");
             }

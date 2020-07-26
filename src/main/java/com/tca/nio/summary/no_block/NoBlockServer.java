@@ -20,7 +20,7 @@ public class NoBlockServer {
         // 2.切换成非阻塞模式
         serverSocketChannel.configureBlocking(false);
         // 3. 绑定连接
-        serverSocketChannel.bind(new InetSocketAddress(8080));
+        serverSocketChannel.bind(new InetSocketAddress(9999));
         // 4. 获取选择器
         Selector selector = Selector.open();
         // 4.1将通道注册到选择器上，指定接收"监听通道"事件
@@ -40,13 +40,13 @@ public class NoBlockServer {
                     clientSocketChannel.configureBlocking(false);
                     // 8.2 注册到选择器上-->拿到客户端的连接为了读取通道的数据(监听读就绪事件)
                     clientSocketChannel.register(selector, SelectionKey.OP_READ);
-                } else if (selectionKey.isReadable()) { // 读事件就绪
+                } else if (selectionKey.isReadable()) {
                     // 9. 获取当前选择器读就绪状态的通道
                     SocketChannel client = (SocketChannel) selectionKey.channel();
                     // 9.1读取数据
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
                     // 9.2得到文件通道, 将客户端传递过来的图片写到本地项目下(写模式、没有则创建)
-                    FileChannel fileChannel = FileChannel.open(Paths.get("C:\\Users\\DELL\\Desktop\\password_copy.txt"),
+                    FileChannel fileChannel = FileChannel.open(Paths.get("C:\\Users\\zhouan\\Desktop\\hello.txt"),
                             StandardOpenOption.WRITE, StandardOpenOption.CREATE);
                     while (client.read(buffer) > 0) {
                         // 在读之前都要切换成读模式
