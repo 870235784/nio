@@ -19,7 +19,7 @@ public class NioClient {
         SocketChannel clientSocketChannel = SocketChannel.open(new InetSocketAddress("127.0.0.1", 9999));
         clientSocketChannel.configureBlocking(false);
         // 2.获取文件通道
-        FileChannel fileChannel = FileChannel.open(Paths.get("C:\\Users\\zhouan\\Desktop\\hello.txt"),
+        FileChannel fileChannel = FileChannel.open(Paths.get("C:\\Users\\DELL\\Desktop\\password.txt"),
                 StandardOpenOption.READ);
         // 3.获取buffer
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);

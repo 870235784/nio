@@ -51,5 +51,6 @@
             原因四: Reactor线程模型
                 1.三种线程模型
                     a.Reactor单线程模型
+                        Reactor反应器和Handlers处理器处于一个线程中执行
                     b.Reactor多线程模型
                     c.主从Reactor多线程模型
