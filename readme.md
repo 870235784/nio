@@ -53,4 +53,28 @@
                     a.Reactor单线程模型
                         Reactor反应器和Handlers处理器处于一个线程中执行
                     b.Reactor多线程模型
+                        引入多个selector选择器
+                        设计一个新的子反应 [subReactor]类, 一个子反应器负责查询一个selector选择器, 一个选择器上可能对应多个
+                        Channel通道
+                        开启多个反应器的处理线程, 一个线程负责执行一个子反应器
                     c.主从Reactor多线程模型
+                2.Netty中的Reactor反应器模式
+                    step1: Channel通道注册。IO源于通道, 一次IO事件一定属于某个通道。通道注册到selector选择器后, IO事件会
+                        被选择器查询到。
+                    step2: Reactor查询选择。一个反应器(或子反应器)会负责一个线程, 不断地轮询, 查询选择器中的IO事件。
+                    step3: Reactor事件分发。如果反应器在选择器上查询到IO事件, 则分发给IO事件绑定的Handler处理器上。
+                    step4: Handler事件处理。
+    2.3 ByteBuf
+        2.3.1 ByteBuf缓冲区类型
+            Heap ByteBuf
+                内部数据为一个java数组, 存储在JVM堆空间
+                未池化的情况下, 能提供快速的分配和释放
+                写入底层传输通道之前, 都会复制到直接缓冲区(不足, 效率低)
+            Direct ByteBuf
+                内部数据存储在操作系统的物理内存中
+                能获取超过JVM堆空间的内存空间; 写入传输通道比堆缓冲区快
+                释放和分配空间昂贵; 在java中操作时都需要复制一次到堆上
+            CompositeBuffer
+                多个缓冲区的组合表示
+                方便一次操作多个缓冲区实例 
+                
