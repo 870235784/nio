@@ -1,20 +1,16 @@
-package com.tca.netty.tcp.config;
+package com.tca.netty.encode_decode.config;
 
-import com.tca.netty.tcp.handler.MessageDispatcher;
+import com.tca.netty.encode_decode.handler.NewMessageDispatcher;
 import com.tca.netty.tcp.message.PackageData;
 import com.tca.utils.ValidateUtils;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 
 /**
  * @author zhouan
@@ -23,18 +19,18 @@ import java.nio.charset.Charset;
 @Slf4j
 @Component
 @ChannelHandler.Sharable
-public class TcpServerHandler extends ChannelInboundHandlerAdapter {
+public class NewTcpServerHandler extends ChannelInboundHandlerAdapter {
 
-    public TcpServerHandler() {
+    public NewTcpServerHandler() {
         log.info(" --- 初始化TCPServerHandler --- ");
-        this.sessionManager = SessionManager.getInstance();
+        this.sessionManager = NewSessionManager.getInstance();
     }
 
 
     /**
      * SessionManager
      */
-    private final SessionManager sessionManager;
+    private final NewSessionManager sessionManager;
 
 
     /**
@@ -55,7 +51,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
             log.info(" --- 客户端【" + channelId + "】是连接状态，连接通道数量: " + sessionManager.size());
         } else {
             //保存连接
-            Session session = Session.getSession(null, channel,this);
+            NewSession session = NewSession.getSession(null, channel, this);
             sessionManager.putChannelIdSession(channelId, session);
             log.info(" --- 客户端【" + channelId + "】连接netty服务器[IP:" + clientIp + "--->PORT:" + clientPort + "]");
             log.info(" --- 连接通道数量: " + sessionManager.size());
@@ -90,22 +86,11 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws InterruptedException {
         try {
             // 1.转成统一协议 PackageData
-            ByteBuf buf = (ByteBuf) msg;
-            if (buf.readableBytes() <= 0) {
-                return;
-            }
-            byte[] bs = new byte[buf.readableBytes()];
-            buf.readBytes(bs);
-
-            Session session = SessionManager.getInstance().getByChannelId(ctx.channel().id().asLongText());
-            Charset charset = ValidateUtils.isEmpty(session.getCharsetName()) ?
-                    CharsetUtil.UTF_8 : Charset.forName(session.getCharsetName());
-
-            String messageStr = new String(bs, charset);
+            String messageStr = (String)msg;
             log.info("从客户端读取数据, channelId = {}, msg = {}", ctx.channel().id().asLongText(), messageStr);
             PackageData data = new PackageData(messageStr);
             // 2.消息处理
-            MessageDispatcher.dispatch(data.getMessageType()).handle(ctx.channel().id().asLongText(), data);
+            NewMessageDispatcher.dispatch(data.getMessageType()).handle(ctx.channel().id().asLongText(), data);
         } catch (Exception e) {
             log.error("接收处理数据错误", e);
         } finally {
@@ -119,13 +104,12 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
      * @param msg
      */
     public ChannelFuture channelWrite(String channelId, String msg) {
-        Session session = sessionManager.getByChannelId(channelId);
+        NewSession session = sessionManager.getByChannelId(channelId);
         if (ValidateUtils.isEmpty(session)) {
             log.error("session不存在, channelId = {}", channelId);
             return null;
         }
-        ChannelFuture channelFuture = session.getChannel().writeAndFlush(
-                Unpooled.copiedBuffer(msg, Charset.forName(session.getCharsetName())));
+        ChannelFuture channelFuture = session.getChannel().writeAndFlush(msg);
         channelFuture.addListener((ChannelFutureListener) future -> {
             // 6. 关闭连接
             if (future.isSuccess()) {
@@ -135,8 +119,6 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
             }
         });
         return channelFuture;
-//        return session.getChannel().writeAndFlush(msg);
-//        return session.getChannel().writeAndFlush(msg.getBytes(Charset.forName(session.getCharsetName())));
     }
 
     @Override
@@ -153,7 +135,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
             // 读超时 主动断开连接
             if (event.state() == IdleState.READER_IDLE) {
                 log.error("服务器主动断开连接: {}", ctx.channel().id().asLongText());
-                Session session = sessionManager.removeByChannelId(ctx.channel().id().asLongText());
+                NewSession session = sessionManager.removeByChannelId(ctx.channel().id().asLongText());
                 ctx.close();
             }
         }

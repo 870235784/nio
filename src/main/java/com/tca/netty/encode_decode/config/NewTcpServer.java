@@ -1,4 +1,4 @@
-package com.tca.netty.tcp.config;
+package com.tca.netty.encode_decode.config;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -8,6 +8,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,11 +27,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class TcpServer {
+public class NewTcpServer {
 
 
     @Autowired
-    private TcpServerHandler tcpServerHandler;
+    private NewTcpServerHandler newTcpServerHandler;
 
     /**
      * 状态
@@ -44,16 +49,16 @@ public class TcpServer {
     /**
      * 端口
      */
-    @Value("${tcp.server.port:9000}")
+    @Value("${tcp.server.port:9999}")
     private int port;
 
     @Value("${tcp.server.idleTime:60}")
     private int idleTime;
 
-    public TcpServer() {
+    public NewTcpServer() {
     }
 
-    public TcpServer(int port) {
+    public NewTcpServer(int port) {
         this();
         this.port = port;
     }
@@ -68,10 +73,14 @@ public class TcpServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel client) throws Exception {
+                        client.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4));
+                        client.pipeline().addLast(new StringDecoder(Charset.forName(CHARSET_NAME)));
+                        client.pipeline().addLast(new LengthFieldPrepender(4));
+                        client.pipeline().addLast(new StringEncoder(Charset.forName(CHARSET_NAME)));
                         // 超时设置
                         client.pipeline().addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.SECONDS));
                         // 业务逻辑处理
-                        client.pipeline().addLast(tcpServerHandler);
+                        client.pipeline().addLast(newTcpServerHandler);
                     }
 
                 }).option(ChannelOption.SO_BACKLOG, 128)
