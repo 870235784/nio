@@ -50,7 +50,8 @@ public class NettyClient {
                 log.info("发送心跳消息: {}", jsonObject.toJSONString());
             String jsonString = jsonObject.toJSONString();
             ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(4 + jsonString.length());
-            buffer.writeBytes(int2Bytes(jsonString.length()));
+            buffer.writeInt(jsonString.length());
+//            buffer.writeBytes(int2Bytes(jsonString.length()));
             log.info("可读长度: {}", buffer.readableBytes());
             buffer.writeBytes(jsonString.getBytes());
             log.info("可读长度: {}", buffer.readableBytes());

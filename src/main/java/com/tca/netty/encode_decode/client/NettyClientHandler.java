@@ -6,7 +6,6 @@ import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,10 +47,16 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         if (buf.readableBytes() <= 0) {
             return;
         }
+
+        int length = buf.readInt();
+        log.info("收到服务器body长度为: {}", length);
+
         byte[] bs = new byte[buf.readableBytes()];
         buf.readBytes(bs);
+        log.info("收到服务器body内容为: {}", new String(bs));
+        /*buf.readBytes(bs);
         log.info("校验长度: {}, bs.length = {}, bs[3] = {}", bs[3] + 4 == bs.length, bs.length, bs[3]);
-        log.info("收到服务端数据:" + Arrays.toString(bs));
+        log.info("收到服务端数据:" + Arrays.toString(bs));*/
 
     }
 
