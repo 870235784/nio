@@ -6,11 +6,8 @@ import com.tca.netty.tcp.config.SessionManager;
 import com.tca.netty.tcp.enums.MessageTypeEnum;
 import com.tca.netty.tcp.message.PackageData;
 import com.tca.netty.tcp.message.outbound.HeartbeatRespMessage;
-import com.tca.utils.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * @author zhouan
