@@ -59,7 +59,7 @@ public class TcpServer {
     }
 
     private void bind() throws Exception {
-        this.bossGroup = new NioEventLoopGroup();
+        this.bossGroup = new NioEventLoopGroup(1);
         this.workerGroup = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap()
                 // 绑定线程组
@@ -77,9 +77,11 @@ public class TcpServer {
                 }).option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-        log.info("TCP服务启动完毕, port = {}", this.port);
         ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+        log.info("TCP服务启动完毕, port = {}", this.port);
         channelFuture.channel().closeFuture().sync();
+        this.bossGroup.shutdownGracefully();
+        this.workerGroup.shutdownGracefully();
     }
 
     /**

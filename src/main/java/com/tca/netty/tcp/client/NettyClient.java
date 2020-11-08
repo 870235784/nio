@@ -8,8 +8,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
@@ -70,6 +68,13 @@ public class NettyClient {
                     });
 
             ChannelFuture channelFuture = b.connect(HOST, PORT).sync();
+            channelFuture.addListener(future -> {
+                if (future.isSuccess()) {
+                    log.info("连接服务端成功");
+                } else {
+                    log.info("连接服务端失败");
+                }
+            });
             log.info("给服务端发送消息: {}", content);
             channelFuture.channel().writeAndFlush(content);
             channelFuture.addListener((ChannelFutureListener) future -> {

@@ -16,6 +16,6 @@ public class NewTcpServerStarter implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        newTcpServer.startServer();
+//        newTcpServer.startServer();
     }
 }

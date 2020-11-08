@@ -55,7 +55,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
             log.info(" --- 客户端【" + channelId + "】是连接状态，连接通道数量: " + sessionManager.size());
         } else {
             //保存连接
-            Session session = Session.getSession(null, channel,this);
+            Session session = Session.getSession(null, channel, this);
             sessionManager.putChannelIdSession(channelId, session);
             log.info(" --- 客户端【" + channelId + "】连接netty服务器[IP:" + clientIp + "--->PORT:" + clientPort + "]");
             log.info(" --- 连接通道数量: " + sessionManager.size());

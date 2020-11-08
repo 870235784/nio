@@ -111,7 +111,6 @@ public class NewTcpServerHandler extends ChannelInboundHandlerAdapter {
         }
         ChannelFuture channelFuture = session.getChannel().writeAndFlush(msg);
         channelFuture.addListener((ChannelFutureListener) future -> {
-            // 6. 关闭连接
             if (future.isSuccess()) {
                 log.info("发送成功!");
             } else {

@@ -16,6 +16,6 @@ public class TcpServerStarter implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        tcpServer.startServer();
+        tcpServer.startServer();
     }
 }
