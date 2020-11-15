@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class NettyClient {
 
     static final String HOST = System.getProperty("host", "127.0.0.1");
-    static final int PORT = Integer.parseInt(System.getProperty("port", "9999"));
+    static final int PORT = Integer.parseInt(System.getProperty("port", "9000"));
 
     private static final String charset = "UTF-8";
 

@@ -37,6 +37,18 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
     private final SessionManager sessionManager;
 
 
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        log.info("handlerAdded方法被调用");
+        super.handlerAdded(ctx);
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelRegistered方法被调用");
+        super.channelRegistered(ctx);
+    }
+
     /**
      * 客户端连接上
      * @param ctx

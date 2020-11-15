@@ -28,9 +28,10 @@ public class ChannelTest {
 
     private static CountDownLatch countDownLatch = new CountDownLatch(1);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         // FileChannel
 //        fileChannelTest();
+
         // ServerSocketChannel
         new Thread(() -> {
             try {
@@ -50,6 +51,7 @@ public class ChannelTest {
             }
         }).start();
 
+//        fileCopyTest();
     }
 
     /**
@@ -90,6 +92,23 @@ public class ChannelTest {
     }
 
     /**
+     * 文件复制
+     */
+    private static void fileCopyTest() throws IOException{
+        // step1 创建文件输入流和输出流对象
+        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\DELL\\Desktop\\nacos问题.txt");
+        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\DELL\\Desktop\\nacos问题.txt_copy.txt");
+        // step2 获取管道
+        FileChannel inputStreamChannel = fileInputStream.getChannel();
+        FileChannel outputStreamChannel = fileOutputStream.getChannel();
+        // step3 使用transferFrom实现文件复制
+        outputStreamChannel.transferFrom(inputStreamChannel, 0, inputStreamChannel.size());
+        // step4 关闭流
+        inputStreamChannel.close();
+        outputStreamChannel.close();
+    }
+
+    /**
      * ServerSocketChannel
      */
     private static void serverSocketChannelTest() throws IOException {
@@ -98,10 +117,10 @@ public class ChannelTest {
         serverSocketChannel.configureBlocking(false);
         serverSocketChannel.bind(new InetSocketAddress(9999));
         log.info("服务端启动成功, port = {}", 9999);
-        countDownLatch.countDown();
         // 2.初始化Selector, 并注册
         Selector selector = Selector.open();
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        countDownLatch.countDown();
         // 3.监听事件并处理
         // selector.select() > 0 ---> 有监听到事件
         while (selector.select() > 0) {
@@ -116,11 +135,11 @@ public class ChannelTest {
                     ServerSocketChannel channel = (ServerSocketChannel)selectionKey.channel();
                     SocketChannel socketChannel = channel.accept();
                     socketChannel.configureBlocking(false);
-                    socketChannel.register(selector, SelectionKey.OP_READ);
+                    socketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(1024));
                 } else if (selectionKey.isReadable()) {
                     // 6.监听到客户端数据
-                    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                     SocketChannel socketChannel = (SocketChannel)selectionKey.channel();
+                    ByteBuffer byteBuffer = (ByteBuffer)selectionKey.attachment();
                     StringBuffer sb = new StringBuffer();
                     int length;
                     while ((length = socketChannel.read(byteBuffer)) > 0) {
