@@ -61,27 +61,37 @@ public class TcpServer {
     private void bind() throws Exception {
         this.bossGroup = new NioEventLoopGroup(1);
         this.workerGroup = new NioEventLoopGroup();
-        ServerBootstrap serverBootstrap = new ServerBootstrap()
-                // 绑定线程组
-                .group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel client) throws Exception {
-                        // 超时设置
-                        client.pipeline().addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.SECONDS));
-                        // 业务逻辑处理
-                        client.pipeline().addLast(tcpServerHandler);
-                    }
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap()
+                    // 绑定线程组
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel client) throws Exception {
+                            // 超时设置
+                            client.pipeline().addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.SECONDS));
+                            // 业务逻辑处理
+                            client.pipeline().addLast(tcpServerHandler);
+                        }
 
-                }).option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    })
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-        ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
-        log.info("TCP服务启动完毕, port = {}", this.port);
-        channelFuture.channel().closeFuture().sync();
-        this.bossGroup.shutdownGracefully();
-        this.workerGroup.shutdownGracefully();
+            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+            channelFuture.addListener(future -> {
+                if (future.isSuccess()) {
+                    log.info("TCP服务启动完毕, port = {}", this.port);
+                } else {
+                    log.error("TCP服务启动失败, cause = {}", future.cause());
+                }
+            });
+            channelFuture.channel().closeFuture().sync();
+        } finally {
+            this.bossGroup.shutdownGracefully();
+            this.workerGroup.shutdownGracefully();
+        }
     }
 
     /**

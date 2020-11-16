@@ -64,31 +64,38 @@ public class NewTcpServer {
     }
 
     private void bind() throws Exception {
-        this.bossGroup = new NioEventLoopGroup();
+        this.bossGroup = new NioEventLoopGroup(1);
         this.workerGroup = new NioEventLoopGroup();
-        ServerBootstrap serverBootstrap = new ServerBootstrap()
-                // 绑定线程组
-                .group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel client) throws Exception {
-                        client.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4));
-                        client.pipeline().addLast(new StringDecoder(Charset.forName(CHARSET_NAME)));
-                        client.pipeline().addLast(new LengthFieldPrepender(4));
-                        client.pipeline().addLast(new StringEncoder(Charset.forName(CHARSET_NAME)));
-                        // 超时设置
-                        client.pipeline().addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.SECONDS));
-                        // 业务逻辑处理
-                        client.pipeline().addLast(newTcpServerHandler);
-                    }
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap()
+                    // 绑定线程组
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel client) throws Exception {
+                            client.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4));
+                            client.pipeline().addLast(new StringDecoder(Charset.forName(CHARSET_NAME)));
+                            client.pipeline().addLast(new LengthFieldPrepender(4));
+                            client.pipeline().addLast(new StringEncoder(Charset.forName(CHARSET_NAME)));
+                            // 超时设置
+                            client.pipeline().addLast(new IdleStateHandler(idleTime, 0, 0, TimeUnit.SECONDS));
+                            // 业务逻辑处理
+                            client.pipeline().addLast(newTcpServerHandler);
+                        }
 
-                }).option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    })
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-        log.info("TCP服务启动完毕, port = {}", this.port);
-        ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
-        channelFuture.channel().closeFuture().sync();
+            log.info("TCP服务启动完毕, port = {}", this.port);
+            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+            channelFuture.channel().closeFuture().sync();
+        } finally {
+            this.workerGroup.shutdownGracefully();
+            this.bossGroup.shutdownGracefully();
+        }
+
     }
 
     /**
