@@ -2,7 +2,13 @@ package com.tca.netty.tcp.config;
 
 
 import com.tca.utils.ValidateUtils;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author zhouan
  * Session管理
  */
+@Slf4j
 public class SessionManager {
 
     private static volatile SessionManager instance = null;
@@ -163,6 +170,42 @@ public class SessionManager {
         return channelIdSessionMap.size();
     }
 
+    /**
+     * 写数据
+     * @param channelId
+     * @param msg
+     */
+    public ChannelFuture channelWrite(String channelId, String msg) {
+        Session session = getByChannelId(channelId);
+        if (ValidateUtils.isEmpty(session)) {
+            log.error("session不存在, channelId = {}", channelId);
+            return null;
+        }
+        ChannelFuture channelFuture = session.getChannel().writeAndFlush(
+                Unpooled.copiedBuffer(msg, Charset.forName(session.getCharsetName())));
+        channelFuture.addListener((ChannelFutureListener) future -> {
+            // 6. 关闭连接
+            if (future.isSuccess()) {
+                log.info("发送成功!");
+            } else {
+                log.info("发送失败！");
+            }
+        });
+        return channelFuture;
+    }
 
+    /**
+     * 关闭通道
+     * @param channel
+     */
+    public void close(Channel channel) {
+        if (ValidateUtils.isEmpty(channel)) {
+            return;
+        }
+        String channelId = channel.id().asLongText();
+        log.info("通道关闭: channelId = {}", channelId);
+        this.removeByChannelId(channelId);
+        channel.close();
+    }
 
 }

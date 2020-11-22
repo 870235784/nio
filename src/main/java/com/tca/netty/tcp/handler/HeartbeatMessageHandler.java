@@ -26,7 +26,7 @@ public class HeartbeatMessageHandler extends AbstractMessageHandler {
     public void handle(String channelId, PackageData packageData) {
         Session session = SessionManager.getInstance().getByChannelId(channelId);
         HeartbeatRespMessage heartbeatRespMessage = new HeartbeatRespMessage();
-        session.getTcpServerHandler().channelWrite(session.getChannelId(),
+        sessionManager.channelWrite(session.getChannelId(),
                 JSONObject.toJSONString(heartbeatRespMessage));
     }
 

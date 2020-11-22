@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractMessageHandler {
 
+    protected SessionManager sessionManager = SessionManager.getInstance();
+
     public AbstractMessageHandler() {
         MessageDispatcher.register(this);
     }
@@ -39,7 +41,7 @@ public abstract class AbstractMessageHandler {
         Session session = SessionManager.getInstance().getByChannelId(channelId);
         if (!session.isAuthenticated()) {
             log.error("当前连接未认证, 需要关闭连接! channelId = {}", channelId);
-            session.getTcpServerHandler().close(session.getChannel());
+            sessionManager.close(session.getChannel());
             return null;
         }
         return session;

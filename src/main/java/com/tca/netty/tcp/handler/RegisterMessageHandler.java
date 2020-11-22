@@ -3,21 +3,13 @@ package com.tca.netty.tcp.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.tca.netty.tcp.config.Session;
 import com.tca.netty.tcp.config.SessionManager;
-import com.tca.netty.tcp.config.TcpServerHandler;
-import com.tca.netty.tcp.enums.EquipmentOnlineEnum;
 import com.tca.netty.tcp.enums.MessageTypeEnum;
 import com.tca.netty.tcp.message.PackageData;
 import com.tca.netty.tcp.message.inbound.RegistryReqMessage;
 import com.tca.netty.tcp.message.outbound.RegistryRespMessage;
 import com.tca.utils.ValidateUtils;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.nio.charset.Charset;
 
 /**
  * @author zhouan
@@ -50,8 +42,7 @@ public class RegisterMessageHandler extends AbstractMessageHandler {
         session.setAuthenticated(true);
         session.setSn(registryReqMessage.getSn());
         sessionManager.putSnSession(registryReqMessage.getSn(), session);
-        session.getTcpServerHandler()
-                .channelWrite(session.getChannelId(),
+        sessionManager.channelWrite(session.getChannelId(),
                         JSONObject.toJSONString(new RegistryRespMessage()));
     }
 

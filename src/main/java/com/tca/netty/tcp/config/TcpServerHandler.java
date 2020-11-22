@@ -4,8 +4,10 @@ import com.tca.netty.tcp.handler.MessageDispatcher;
 import com.tca.netty.tcp.message.PackageData;
 import com.tca.utils.ValidateUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
@@ -86,7 +88,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
         String channelId = ctx.channel().id().asLongText();
         // 包含此客户端才去删除
         if (sessionManager.containsChannelId(channelId)) {
-            close(ctx.channel());
+            sessionManager.close(ctx.channel());
             log.info(" --- 客户端【" + channelId + "】退出netty服务器[IP:" + clientIp + "--->PORT:" + inSocket.getPort() + "]");
             log.info(" -- 连接通道数量: " + sessionManager.size());
         }
@@ -125,31 +127,6 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    /**
-     * 写数据
-     * @param channelId
-     * @param msg
-     */
-    public ChannelFuture channelWrite(String channelId, String msg) {
-        Session session = sessionManager.getByChannelId(channelId);
-        if (ValidateUtils.isEmpty(session)) {
-            log.error("session不存在, channelId = {}", channelId);
-            return null;
-        }
-        ChannelFuture channelFuture = session.getChannel().writeAndFlush(
-                Unpooled.copiedBuffer(msg, Charset.forName(session.getCharsetName())));
-        channelFuture.addListener((ChannelFutureListener) future -> {
-            // 6. 关闭连接
-            if (future.isSuccess()) {
-                log.info("发送成功!");
-            } else {
-                log.info("发送失败！");
-            }
-        });
-        return channelFuture;
-//        return session.getChannel().writeAndFlush(msg);
-//        return session.getChannel().writeAndFlush(msg.getBytes(Charset.forName(session.getCharsetName())));
-    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -179,17 +156,5 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    /**
-     * 关闭通道
-     * @param channel
-     */
-    public void close(Channel channel) {
-        if (ValidateUtils.isEmpty(channel)) {
-            return;
-        }
-        String channelId = channel.id().asLongText();
-        log.info("通道关闭: channelId = {}", channelId);
-        sessionManager.removeByChannelId(channelId);
-        channel.close();
-    }
+
 }
