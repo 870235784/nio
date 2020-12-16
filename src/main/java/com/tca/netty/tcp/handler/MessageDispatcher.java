@@ -1,7 +1,7 @@
 package com.tca.netty.tcp.handler;
 
+import com.tca.common.utils.ValidateUtils;
 import com.tca.netty.tcp.enums.MessageTypeEnum;
-import com.tca.utils.ValidateUtils;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;

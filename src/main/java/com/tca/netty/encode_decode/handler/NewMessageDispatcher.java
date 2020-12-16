@@ -1,7 +1,7 @@
 package com.tca.netty.encode_decode.handler;
 
+import com.tca.common.utils.ValidateUtils;
 import com.tca.netty.tcp.enums.MessageTypeEnum;
-import com.tca.utils.ValidateUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,6 +1,6 @@
-package com.tca.nio.wechat;
+package com.tca.java_nio.wechat;
 
-import com.tca.utils.ValidateUtils;
+import com.tca.common.utils.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

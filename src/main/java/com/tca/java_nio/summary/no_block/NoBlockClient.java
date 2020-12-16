@@ -1,4 +1,4 @@
-package com.tca.nio.summary.no_block;
+package com.tca.java_nio.summary.no_block;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

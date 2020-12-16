@@ -1,4 +1,4 @@
-package com.tca.nio.base;
+package com.tca.java_nio.base;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,7 +83,7 @@ public class ChannelTest {
                 outputStreamChannel.write(byteBuffer);
             }
             // 结束
-            System.out.println("复制文件结束!");
+            log.info("复制文件结束!");
             outputStreamChannel.close();
             inputStreamChannel.close();
         } catch (IOException e) {

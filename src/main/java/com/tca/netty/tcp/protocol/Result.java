@@ -3,6 +3,7 @@ package com.tca.netty.tcp.protocol;
 import com.alibaba.fastjson.JSONObject;
 import io.netty.util.CharsetUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.Charset;
 
@@ -11,6 +12,7 @@ import java.nio.charset.Charset;
  * @Date 2020/7/17
  */
 @Data
+@Slf4j
 public class Result {
 
     public Result() {}
@@ -34,7 +36,7 @@ public class Result {
     public static void main(String[] args) {
         String str = "我是中国人";
         String gbk = new String(str.getBytes(CharsetUtil.UTF_8), Charset.forName("GBK"));
-        System.out.println(gbk);
+        log.info(gbk);
 
         String str1 = "鎴戞槸涓\uE15E浗浜�";
         new String(gbk.getBytes());

@@ -10,11 +10,13 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhoua
  * @Date 2020/2/20
  */
+@Slf4j
 public class TCATomcat {
 
     public void start(int port) throws Exception {
@@ -49,7 +51,7 @@ public class TCATomcat {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture channelFuture = server.bind(port).sync();
-            System.out.println("服务器启动, port : 8080");
+            log.info("服务器启动, port : 8080");
             channelFuture.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();

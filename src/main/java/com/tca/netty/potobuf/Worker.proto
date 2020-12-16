@@ -1,0 +1,7 @@
+syntax = "proto3";// 版本
+option java_package = "com.tca.netty.protobuf";
+// protobuf 使用message 管理数据
+message Worker {
+  int32 id = 1;
+  string name = 2;
+}

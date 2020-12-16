@@ -1,7 +1,7 @@
 package com.tca.netty.tcp.config;
 
 
-import com.tca.utils.ValidateUtils;
+import com.tca.common.utils.ValidateUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

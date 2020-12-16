@@ -1,8 +1,8 @@
 package com.tca.netty.tcp.config;
 
+import com.tca.common.utils.ValidateUtils;
 import com.tca.netty.tcp.handler.MessageDispatcher;
 import com.tca.netty.tcp.message.PackageData;
-import com.tca.utils.ValidateUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

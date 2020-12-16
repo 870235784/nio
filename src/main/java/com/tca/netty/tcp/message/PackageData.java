@@ -1,7 +1,7 @@
 package com.tca.netty.tcp.message;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tca.utils.ValidateUtils;
+import com.tca.common.utils.ValidateUtils;
 import lombok.Data;
 
 /**

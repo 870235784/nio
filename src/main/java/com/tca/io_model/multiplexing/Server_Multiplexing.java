@@ -1,4 +1,4 @@
-package com.tca.nio.summary.no_block;
+package com.tca.io_model.multiplexing;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,8 +11,11 @@ import java.util.Iterator;
 /**
  * @author zhoua
  * @Date 2020/2/14
+ * IO 多路复用 (严格上属于bio, 因为调用select()函数会阻塞)
+ *  多路复用指的是 多个socket注册到同一个selector上被监听
+ *  可以实现一个线程管理所有客户端连接
  */
-public class NoBlockServer {
+public class Server_Multiplexing {
 
     public static void main(String[] args) throws IOException {
         // 1.获取通道

@@ -1,8 +1,8 @@
 package com.tca.netty.encode_decode.config;
 
+import com.tca.common.utils.ValidateUtils;
 import com.tca.netty.encode_decode.handler.NewMessageDispatcher;
 import com.tca.netty.tcp.message.PackageData;
-import com.tca.utils.ValidateUtils;
 import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;

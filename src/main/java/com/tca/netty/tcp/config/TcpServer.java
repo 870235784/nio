@@ -75,7 +75,6 @@ public class TcpServer {
                             // 业务逻辑处理
                             client.pipeline().addLast(tcpServerHandler);
                         }
-
                     })
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 

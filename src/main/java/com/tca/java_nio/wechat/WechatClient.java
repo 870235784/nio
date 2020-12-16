@@ -1,6 +1,6 @@
-package com.tca.nio.wechat;
+package com.tca.java_nio.wechat;
 
-import com.tca.utils.ValidateUtils;
+import com.tca.common.utils.ValidateUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -97,6 +97,6 @@ public class WechatClient {
     }
 
     public static void main(String[] args) throws IOException {
-        new WechatClient(8080).connect();
+        new WechatClient(9999).connect();
     }
 }
