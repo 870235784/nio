@@ -14,6 +14,9 @@ import java.util.Iterator;
  * IO 多路复用 (严格上属于bio, 因为调用select()函数会阻塞)
  *  多路复用指的是 多个socket注册到同一个selector上被监听
  *  可以实现一个线程管理所有客户端连接
+ *  IO 多路复用 底层可用 select poll epoll 三种方式实现
+ *  IO 多路复用使用反应器模式：单线程Reactor(当前demo采用该模式) 多线程Reactor 主从Reactor
+ *
  */
 public class Server_Multiplexing {
 

@@ -13,6 +13,10 @@ import java.util.Set;
 /**
  * @author zhoua
  * @Date 2020/7/26
+ * 单线程reactor模型
+ *  1.reactor反应器和handler在同一个线程上处理
+ *  2.所有ServerSocketChannel SocketChannel使用同一个Selector选择器
+ *  3.使用一个线程监听并处理selector选择器上监听的所有channel的所有事件
  */
 @Slf4j
 public class ServerReactor implements Runnable {
