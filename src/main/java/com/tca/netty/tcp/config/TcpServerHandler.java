@@ -11,7 +11,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
-import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -123,7 +122,8 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
         } catch (Exception e) {
             log.error("接收处理数据错误", e);
         } finally {
-            release(msg);
+            // 无需调用release方法, StringDecoder将byteBuf转为String时, 已经调用了byteBuf的release方法了
+//            release(msg);
         }
     }
 
@@ -148,13 +148,13 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private void release(Object msg) {
+    /*private void release(Object msg) {
         try {
             ReferenceCountUtil.release(msg);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
 }
