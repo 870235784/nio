@@ -43,13 +43,13 @@ public class ChannelTest {
         countDownLatch.await();
 
         // socketChannel
-        new Thread(() -> {
-            try {
-                socketChannelTest();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+//        new Thread(() -> {
+//            try {
+//                socketChannelTest();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
 
 //        fileCopyTest();
     }

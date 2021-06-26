@@ -31,7 +31,7 @@ public class BufferTest {
         // 表示capacity是1024个Byte; 如果使用LongBuffer.allocate(1024),表示capacity是1024个Long
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         log.info("byteBuffer init...");
-        // 在写模式下, limit == capacity
+        // 在写模式下, limit == capacity, 即limit==最多可以写到的位置
         log.info("capacity = {}, limit = {}, position = {}", byteBuffer.capacity(), byteBuffer.limit(), byteBuffer.position());
         byteBuffer.put("hello world".getBytes());
         log.info("put hello world.getBytes()");
